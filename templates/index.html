@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>PhicommM1</title>
+    <meta name="viewport"
+        content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='css/iconfont.css') }}" />
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='css/style.css') }}" />
+    <script src="{{ url_for('static',filename='js/flexible.js') }}" type="text/javascript" charset="utf-8"></script>
+    <script src="{{ url_for('static',filename='js/vue.min.js') }}" type="text/javascript" charset="utf-8"></script>
+    <script src="{{ url_for('static',filename='js/echarts.min.js') }}" type="text/javascript" charset="utf-8"></script>
+    <script src="{{ url_for('static',filename='js/layer_mobile/layer.js') }}" type="text/javascript" charset="utf-8"></script>
+    <script src="https://cdn.staticfile.org/jquery/1.10.2/jquery.min.js"></script>
+</head>
+
+<body>
+    <div id="app">
+        <div class="top-bg"></div>
+        <div class="top-bar">
+            <a class="iconfont icon-left"></a>
+            <span>M1空气质量监测</span>
+            <i></i>
+        </div>
+        <div class="container">
+            <div class="account">
+                <img src="{{ url_for('static',filename='images/head-face.png') }}" alt="">
+                <div class="name">
+                    <p>悟空M1</p>
+                    <span>主卧室</span>
+                </div>
+            </div>
+            <!-- 信息面板 -->
+            <div class="info-panel">
+                <ul>
+                    <li>
+                        <p><i></i>温度</p>
+                        <span id="info_temperature">{{ info_temperature }}</span><a>°C</a>
+
+                    </li>
+                    <li>
+                        <p><i></i>湿度</p>
+                        <span id="info_humidity">{{ info_humidity }}</span><a>%</a>
+                    </li>
+                    <li>
+                        <p><i></i>PM2.5</p>
+                        <span id="info_pm25">{{ info_pm25 }}</span><a>mg/m³</a>
+                    </li>
+                    <li>
+                        <p><i></i>甲醇</p>
+                        <span id="info_hcho">{{ info_hcho }}</span><a>μg/m³</a>
+                    </li>
+                </ul>
+            </div>
+            <!-- 图表 -->
+            <div class="chart">
+                <div id="info_time" class="now">{{ info_time }}</div>
+                <div class="type">
+                    <span id="item1" onclick="now_click(this);" :class="type==1?'on':''" @click="changeType(1)">温度</span>
+                    <span id="item2" onclick="now_click(this);" :class="type==2?'on':''" @click="changeType(2)">PM2.5</span>
+                </div>
+                <div id="chart">
+
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+<script>
+    var temperature = new Array ();
+    var pm25 = new Array();
+    var times = new Array();
+    var now_id = "item1";
+    function now_click(ob){
+            now_id=$(ob).attr("id");
+    }
+	function getTest(){
+        // 获取M1的JSON数据
+		$.ajax({
+			type: 'GET',
+			url: '/getdata',
+			dataType: 'json',
+			success: function(m1data){
+				//console.log(m1data.info_temperature);
+				$("#info_time").text(m1data.info_time);
+				$("#info_humidity").text(m1data.info_humidity);
+				$("#info_temperature").text(m1data.info_temperature);
+				$("#info_pm25").text(m1data.info_pm25);
+				$("#info_hcho").text(m1data.info_hcho);
+                temperature.push(m1data.info_temperature);
+                pm25.push(m1data.info_pm25);
+                times.push(m1data.info_time.replace(/.*(\d{2}:\d{2}:\d{2}).*/, "$1")); // 格式化时间 hh:mm:ss
+                if (temperature.length >12){
+                    temperature.shift();
+                }
+                if (pm25.length > 12){
+                    pm25.shift();
+                }
+                if (times.length > 12){
+                    times.shift();
+                }
+			},
+			error: function(){
+				$("#error_msg").text("GetData Error!");
+			}
+		})
+
+        if (now_id == "item1"){
+            $("#item1").click();
+        }
+        else{
+            $("#item2").click();
+        }
+	}
+</script>
+<script type="text/javascript">
+	setInterval(getTest,5000); // 指定获取M1数据的时间周期,单位为毫秒
+</script>
+</body>
+</html>
+
+<script>
+    var that;
+    new Vue({
+        el: '#app',
+        data: {
+            type: 1, // 图表类型
+            chart: null, // 图表
+            chartOptions: null, // 图表配置项
+        },
+        mounted: function () {
+            that = this;
+            this.$nextTick(function () {
+                this.initChart()
+            })
+            window.onresize = function () {
+                that.chart.resize();
+            }
+        },
+        methods: {
+            initChart() {
+                // 初始化图表
+                this.chart = echarts.init(document.getElementById('chart'));
+                // 配置项
+                this.chartOptions = {
+                    grid: {
+                        top: 45,
+                        bottom: 5,
+                        left: 18,
+                        right: 18,
+                        containLabel: true
+                    },
+                    tooltip: {
+                        trigger: 'axis',
+                        axisPointer: {
+                            lineStyle: {
+                                color: {
+                                    type: 'linear',
+                                    x: 0,
+                                    y: 0,
+                                    x2: 0,
+                                    y2: 1,
+                                    colorStops: [{
+                                        offset: 0,
+                                        color: 'rgba(255,255,255,0)' // 0% 处的颜色
+                                    }, {
+                                        offset: 0.5,
+                                        color: 'rgba(255,255,255,1)' // 100% 处的颜色
+                                    }, {
+                                        offset: 1,
+                                        color: 'rgba(255,255,255,0)' // 100% 处的颜色
+                                    }],
+                                    global: false // 缺省为 false
+                                }
+                            },
+                        },
+                    },
+                    xAxis: [{
+                        type: "category",
+                        boundaryGap: false,
+                        axisLabel: {
+                            formatter: '{value}',
+                            fontSize: 12,
+                            margin: 20,
+                            textStyle: {
+                                color: "#bfbfbf"
+                            }
+                        },
+                        axisLine: {
+                            lineStyle: {
+                                color: "#e9e9e9"
+                            }
+                        },
+                        splitLine: {
+                            show: true,
+                            lineStyle: {
+                                color: "#f7f7f7"
+                            }
+                        },
+                        axisTick: {
+                            show: false
+                        },
+                        data: times
+                    }],
+                    yAxis: [
+                        {
+                            boundaryGap: false,
+                            type: "value",
+                            axisLabel: {
+                                textStyle: {
+                                    color: "#bfbfbf"
+                                },
+                                formatter: '{value}',
+                            },
+                            nameTextStyle: {
+                                color: "#fff",
+                                fontSize: 12,
+                                lineHeight: 40
+                            },
+                            splitLine: {
+                                lineStyle: {
+                                    color: "#e2e2e2"
+                                }
+                            },
+                            axisLine: {
+                                show: false,
+                                lineStyle: {
+                                    color: "#e9e9e9"
+                                }
+                            },
+                            axisTick: {
+                                show: false
+                            }
+                        }
+                    ],
+                    series: [{
+                        name: "温度",
+                        type: "line",
+                        smooth: true,
+                        showSymbol: false,
+                        symbolSize: 5,
+                        zlevel: 3,
+                        itemStyle: {
+                            color: '#76BA99',
+                            borderColor: "#76BA99"
+                        },
+                        lineStyle: {
+                            normal: {
+                                width: 2,
+                                color: "#76BA99",
+                            }
+                        },
+                        areaStyle: {
+                            normal: {
+                                color: new echarts.graphic.LinearGradient(
+                                    0,
+                                    0,
+                                    0,
+                                    1,
+                                    [{
+                                        offset: 0,
+                                        color: "#76BA99"
+                                    },
+                                    {
+                                        offset: 0.8,
+                                        color: "#f6f6f8"
+                                    }
+                                    ],
+                                    false
+                                ),
+                            }
+                        },
+                        data: temperature
+                    }]
+                };
+                // 填充配置
+                this.chart.setOption(this.chartOptions);
+            },
+            // 切换类型
+            changeType: function (item) {
+                this.type = item
+                if (item == 1) {
+                    this.chartOptions.xAxis[0].data = times
+                    this.chartOptions.series[0].name = '温度'
+                    this.chartOptions.series[0].data = temperature
+                    this.chart.setOption(this.chartOptions);
+                } else {
+                    this.chartOptions.xAxis[0].data = times
+                    this.chartOptions.series[0].name = 'PM2.5'
+                    this.chartOptions.series[0].data = pm25
+                    this.chart.setOption(this.chartOptions);
+                }
+            },
+        }
+    })
+</script>
