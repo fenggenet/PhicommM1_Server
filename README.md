@@ -11,6 +11,9 @@ Phicomm悟空M1官方服务器关闭,WIFI图标一直闪烁,最开始只是想�
 `pip install pymysql`
 
 `pip install mysql-connector`
+
+`pip install pytz`
+
 # 运行
 
 `chmod a+x ./run.sh`
