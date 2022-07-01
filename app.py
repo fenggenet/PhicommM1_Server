@@ -1,4 +1,5 @@
 import datetime
+import pytz
 from flask import Flask, jsonify, render_template,url_for
 from sqlalchemy import create_engine
 
@@ -51,7 +52,8 @@ def getdata():
 
 # 时间戳转为文本时间格式
 def timestamp2string(timestamp):
-    d = datetime.datetime.fromtimestamp(timestamp)
+    _local_zone = pytz.timezone('Asia/Shanghai')
+    d = datetime.datetime.fromtimestamp(timestamp,_local_zone)
     str1 = d.strftime("%Y-%m-%d %H:%M:%S")
     # 2022-06-29 16:43:37'
     return str1
