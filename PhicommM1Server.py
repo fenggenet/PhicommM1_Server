@@ -8,11 +8,13 @@ import mysql.connector
 import datetime
 import logging
 import os
+from common import function
 
-sqlHost = "127.0.0.1"
-sqlUser = "PhicommM1"
-sqlPasswd = "password"
-sqlDatabase = "phicommm1"
+sqlHost = function.getConfig('sql.conf', 'mysql', 'HOSTNAME')
+sqlPort = function.getConfig('sql.conf', 'mysql', 'PORT')
+sqlUser = function.getConfig('sql.conf', 'mysql', 'USERNAME')
+sqlPasswd = function.getConfig('sql.conf', 'mysql', 'PASSWORD')
+sqlDatabase = function.getConfig('sql.conf', 'mysql', 'DATABASE')
 # 是否写入到MYSQL数据库,True写入,False不写入
 isSql = True
 # 每隔多少获取信息,并写入MYSQL数据中,单位秒 	 
@@ -55,6 +57,7 @@ def get_data(conn, addr):
             jsonData = parseJsonData(data)
             _log("Get M1 data: " + str(jsonData), 3)
             if jsonData is not None:
+                print(jsonData)
                 info_Humidity = cut(float(jsonData['humidity']), 1)  # 湿度
                 info_Temperature = cut(float(jsonData['temperature']), 1)  # 温度
                 info_PM25 = jsonData['value']  # PM2.5
@@ -71,6 +74,7 @@ def mysql_conn():
     try:
         mydb = mysql.connector.connect(
             host=sqlHost,
+            port=sqlPort,
             user=sqlUser,
             passwd=sqlPasswd,
             database=sqlDatabase,
