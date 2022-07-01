@@ -59,7 +59,7 @@ Phicomm悟空M1官方服务器关闭,WIFI图标一直闪烁,最开始只是想�
 
   `chmod a+x ./run.sh`
 
-访问前端: http://You IP:5000 
+访问前端: http://YouIP:5000 
 
 # License
 [GPL-3.0](./LICENSE)
