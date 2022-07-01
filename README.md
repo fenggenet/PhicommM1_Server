@@ -4,6 +4,13 @@ Phicomm悟空M1官方服务器关闭,WIFI图标一直闪烁,最开始只是想�
 
 ###### 关于悟空M1连接WIFI,可以查看这里:[使用EasyLink让M1连接WIFI](https://mrhao.net/archives/134/)
 
+###### 修改路由器DNS自定义HOSTS
+
+127.0.0.1       aircat.phicomm.com
+
+请修改127.0.0.1为PhicommM1 Server的IP地址
+
+
 # 前端截图
 
 ![image](https://github.com/fenggenet/PhicommM1_Server/blob/main/preview/M1.png)
