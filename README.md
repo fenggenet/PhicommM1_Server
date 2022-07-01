@@ -63,3 +63,5 @@ Phicomm悟空M1官方服务器关闭,WIFI图标一直闪烁,最开始只是想�
 
 # License
 [GPL-3.0](./LICENSE)
+
+[![OSCS Status](https://www.oscs1024.com/platform/badge/fenggenet/PhicommM1_Server.svg?size=small)](https://www.oscs1024.com/project/fenggenet/PhicommM1_Server?ref=badge_small)
