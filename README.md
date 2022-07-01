@@ -24,27 +24,27 @@ Phicomm悟空M1官方服务器关闭,WIFI图标一直闪烁,最开始只是想�
 
 # 修改MYSQL配置
 
-###### 进入PhicommM1 Server目录
+###### -进入PhicommM1 Server目录
 
 `cd PhicommM1_Server`
 
-###### 修改You MySQL Host IP为你的MYSQL服务器地址
+###### -修改You MySQL Host IP为你的MYSQL服务器地址
 
 `sed -i 's/^HOSTNAME.*\+=.*/HOSTNAME = You MySQL Host IP/' common/sql.conf`
 
-###### 修改You MySQL Host Prot为你的MYSQL服务器端口
+###### -修改You MySQL Host Prot为你的MYSQL服务器端口
 
 `sed -i 's/^PORT.*\+=.*/PORT = You MySQL Host Prot/' common/sql.conf`
 
-###### 修改You MySQL DataBase为你的MYSQL数据库名称
+###### -修改You MySQL DataBase为你的MYSQL数据库名称
 
 `sed -i 's/^DATABASE.*\+=.*/DATABASE = You MySQL DataBase/' common/sql.conf`
 
-###### 修改You MySQL UserName为你的MYSQL服务器用户名
+###### -修改You MySQL UserName为你的MYSQL服务器用户名
 
 `sed -i 's/^USERNAME.*\+=.*/USERNAME = You MySQL UserName/' common/sql.conf`
 
-###### 修改You MySQL Password为你的MYSQL服务器密码
+###### -修改You MySQL Password为你的MYSQL服务器密码
 
 `sed -i 's/^PASSWORD.*\+=.*/PASSWORD = You MySQL Password/' common/sql.conf`
 
