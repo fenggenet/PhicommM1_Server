@@ -1,14 +1,15 @@
 import datetime
 import pytz
-from flask import Flask, jsonify, render_template,url_for
+from flask import Flask, jsonify, render_template, url_for
 from sqlalchemy import create_engine
+from common import function
 
 # 数据库配置变量
-HOSTNAME = '127.0.0.1'
-PORT = '3306'
-DATABASE = 'phicommm1'
-USERNAME = 'PhicommM1'
-PASSWORD = 'password'
+HOSTNAME = function.getConfig('sql.conf', 'mysql', 'HOSTNAME')
+PORT = function.getConfig('sql.conf', 'mysql', 'PORT')
+DATABASE = function.getConfig('sql.conf', 'mysql', 'DATABASE')
+USERNAME = function.getConfig('sql.conf', 'mysql', 'USERNAME')
+PASSWORD = function.getConfig('sql.conf', 'mysql', 'PASSWORD')
 DB_URI = 'mysql+pymysql://{}:{}@{}:{}/{}'.format(USERNAME, PASSWORD, HOSTNAME, PORT, DATABASE)
 # 创建数据库引擎
 engine = create_engine(DB_URI)
@@ -53,7 +54,7 @@ def getdata():
 # 时间戳转为文本时间格式
 def timestamp2string(timestamp):
     _local_zone = pytz.timezone('Asia/Shanghai')
-    d = datetime.datetime.fromtimestamp(timestamp,_local_zone)
+    d = datetime.datetime.fromtimestamp(timestamp, _local_zone)
     str1 = d.strftime("%Y-%m-%d %H:%M:%S")
     # 2022-06-29 16:43:37'
     return str1
@@ -71,4 +72,4 @@ def parsejsondata(data):
 
 
 if __name__ == '__main__':
-    app.run(host="0.0.0.0", port=5000)
+    app.run(debug=False, host='0.0.0.0', port=5000)
